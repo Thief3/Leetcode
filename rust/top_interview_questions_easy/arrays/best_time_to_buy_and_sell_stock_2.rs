@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------------------
+/********************************************************************************
 Best Time to Buy and Sell Stock II
 
 Say you have an array prices for which the ith element is the price of a given
@@ -20,7 +20,12 @@ Explanation: Buy on day 2 (price = 1) and sell on day 3 (price = 5),
 profit = 5-1 = 4.
 
 Then buy on day 4 (price = 3) and sell on day 5 (price = 6), profit = 6-3 = 3.
- */
+
+Constraints:
+
++ 1 <= prices.length <= 3 * 10 ^ 4
++ 0 <= prices[i] <= 10 ^ 4
+********************************************************************************/
 
 /// Used a moving averages valleys approach
 impl Solution {
