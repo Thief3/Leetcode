@@ -20,37 +20,19 @@ Explanation: Buy on day 2 (price = 1) and sell on day 3 (price = 5),
 profit = 5-1 = 4.
 
 Then buy on day 4 (price = 3) and sell on day 5 (price = 6), profit = 6-3 = 3.
-*/
+ */
+
+/// Used a moving averages valleys approach
 impl Solution {
     pub fn max_profit(prices: Vec<i32>) -> i32 {
-        println!("Prices: {:?}", prices);
-        if(prices.len() > 1){
-            let mut current_sell: usize = 0;
-            let mut current_profit: i32 = 0;
+        let mut current_profit = 0;
         
-            for buy in 0..prices.len() {
-                for sell in buy..prices.len(){
-                    //println!("All sell: {}", sell);
-                    //println!("Profit: {}", prices[sell] - prices[buy]);
-                    if(current_profit < prices[sell] - prices[buy]){
-                        //println!("Current_sell: {}", sell);
-                        //current_buy = buy;
-                        current_sell = sell;
-                        current_profit = prices[sell] - prices[buy];
-                    }
-                }
-            }
-            //println!("Sell at: {}", current_sell);
-            //println!("New Prices: {:?}", prices[current_sell..].to_vec());
-            if(prices.len() == 2){
-                return current_profit;
-            }
-            else {
-                return current_profit + Solution::max_profit(prices[current_sell..].to_vec());
+        for i in 1..prices.len() {
+            if(prices[i] > prices[i-1]){
+                current_profit += prices[i] - prices[i - 1];
             }
         }
-        else {
-            return 0;
-        }
+        
+        return current_profit;
     }
 }
