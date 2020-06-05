@@ -106,9 +106,10 @@ impl Solution {
             }
         }
         
+        //println!("{:?}", str_vec);
+        
         for i in 0..str_vec.len() {
             if(!str_vec[i].is_numeric() && num > 0){
-                //println!("{}", num);
                 num = num/(10_i32.pow((str_vec.len() -i) as u32));
                 break;
             }
@@ -121,34 +122,43 @@ impl Solution {
                 Some(number) => number as i32,
                 None => return 0 as i32 //<- This should never happen.
             };
-            match num.checked_add(dig*(10_i32.pow((str_vec.len() - 1 - i) as u32)){
-                Some(v) => num = v,
+            println!("Digit: {}", dig);
+            println!("Add: {}", dig*(10_i32.pow((str_vec.len() - 1 - i) as u32)));
+            match 10_i32.checked_pow((str_vec.len() - 1 - i) as u32) {
+                Some(v) => 
+                    match num.checked_add(dig*(10_i32.pow((str_vec.len() - 1 - i) as u32))){
+                        Some(v) => {
+                            //println!("{}", v);
+                            num = v},
+                        None => {
+                            //println!("overflow?");
+                            //println!("{}", std::i32::MIN);
+                            if(is_neg){
+                                return std::i32::MIN;
+                            }
+                            else{
+                                return std::i32::MAX;
+                            }
+                        }
+                    },
                 None => {
+                    println!("overflow?");
+                    //println!("{}", std::i32::MIN);
                     if(is_neg){
-                        return (-2_i32).pow(31);
+                        return std::i32::MIN;
                     }
                     else{
-                        return 2_i32.pow(31) -1;
+                        return std::i32::MAX;
                     }
                 }
-            }
-            //num = num + dig*(10_i128.pow((str_vec.len() - 1 - i) as u32));
+            };
+            
         }
-        
-        
+ 
         if(is_neg){
             num = num * (-1);
         }
         
-        //if num < (-2_i128).pow(31){
-        //    println!("ffs");
-        //    return (-2_i32).pow(31);
-        //}
-        //else if num > (2_i128.pow(31) - 1){
-        //    return 2_i32.pow(31) - 1;   
-        //}
-        //else{
-            return num as i32;
-        //}
+        return num as i32;
     }
 }
