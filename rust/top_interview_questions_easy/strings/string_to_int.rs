@@ -20,8 +20,8 @@ If no valid conversion could be performed, a zero value is returned.
 
 Note:
 
-    Only the space character ' ' is considered as whitespace character.
-    Assume we are dealing with an environment which could only store integers
+Only the space character ' ' is considered as whitespace character.
+Assume we are dealing with an environment which could only store integers
 within the 32-bit signed integer range: [−231,  231 − 1]. If the numerical value
 is out of the range of representable values, INT_MAX (231 − 1) or INT_MIN (−231)
 is returned.
@@ -36,7 +36,7 @@ Example 2:
 Input: "   -42"
 Output: -42
 Explanation: The first non-whitespace character is '-', which is the minus sign.
-             Then take as many numerical digits as possible, which gets 42.
+Then take as many numerical digits as possible, which gets 42.
 
 Example 3:
 
@@ -50,8 +50,8 @@ Example 4:
 Input: "words and 987"
 Output: 0
 Explanation: The first non-whitespace character is 'w', which is not a numerical 
-             digit or a +/- sign. Therefore no valid conversion could be
-             performed.
+digit or a +/- sign. Therefore no valid conversion could be
+performed.
 
 Example 5:
 
@@ -59,95 +59,95 @@ Input: "-91283472332"
 Output: -2147483648
 Explanation: The number "-91283472332" is out of the range of a 32-bit signed
 integer.
-             Thefore INT_MIN (−231) is returned.
+Thefore INT_MIN (−231) is returned.
 
 
- ********************************************************************************/
-
+ *******************************************************************************/
 use std::collections::VecDeque;
-use std::convert::TryFrom;
 
 impl Solution {
     pub fn my_atoi(str: String) -> i32 { 
+
+        let mut str_vec: VecDeque<char> = str.chars().collect();
+        let mut my_vec: VecDeque<char> =  VecDeque::new();
         let mut is_neg: bool = false;
+        let mut has_started: bool = false;
+        let mut is_overflow: bool = false;
         let mut num: i32 = 0;
-        let mut str_vec: VecDeque<char> = str.clone().chars().collect();
-        
-        loop{
-            if (str_vec.len() == 0){
-                return 0;
-            }
-            else if(str_vec[0] != ' '){
+ 
+        loop {
+            if(str_vec.len() <= 0){
                 break;
             }
-            else{
+            else if((str_vec[0] == '+' || str_vec[0] == '-') && has_started){
+                break;
+            }
+            else if(str_vec[0] == '-'){
+                is_neg = true;
+                str_vec.pop_front();
+                has_started = true;
+            }
+            else if(str_vec[0] == '+'){
+                str_vec.pop_front();
+                has_started = true;
+            }
+            else if(str_vec[0] == ' ' && !has_started){
                 str_vec.pop_front();
             }
-            
-        }
-        
-        if (str_vec[0] == '-'){
-            is_neg = true;
-            str_vec.pop_front();
-        }
-        else if (str_vec[0] == '+'){
-            str_vec.pop_front();
-        }
-        
-        for i in (0..str_vec.len()).rev() {
-            if !str_vec[i].is_numeric() {
-                str_vec.pop_back();
-            }
-            else{
+            else if(!str_vec[0].is_numeric() || (str_vec[0] == ' ' && has_started)){
                 break;
             }
+            else if (str_vec[0].is_numeric()){
+                my_vec.push_back(str_vec[0]);
+                str_vec.pop_front();
+                has_started = true;
+            }
         }
         
-        for i in 0..str_vec.len() {
-            if(!str_vec[i].is_numeric() && num > 0){
-                num = num/(10_i32.pow((str_vec.len() -i) as u32));
-                break;
-            }
-            else if(!str_vec[i].is_numeric()){
-                return 0;
-            }
-            
-            let dig = match (str_vec[i].to_digit(10)){
-                // Technically I shouldn't really cast like this, I could use a match for the chars to ints but long.
-                Some(number) => number as i32,
-                None => return 0 as i32 //<- This should never happen.
+        for i in 0..my_vec.len(){
+            let dig = match my_vec[i] {
+                '1' => 1 as i32,
+                '2' => 2 as i32,
+                '3' => 3 as i32,
+                '4' => 4 as i32,
+                '5' => 5 as i32,
+                '6' => 6 as i32,
+                '7' => 7 as i32,
+                '8' => 8 as i32,
+                '9' => 9 as i32,
+                '0' => 0 as i32,
+                _ => return 0 as i32 // Shouldn't be possible.
             };
-            println!("Digit: {}", dig);
-            println!("Add: {}", dig*(10_i32.pow((str_vec.len() - 1 - i) as u32)));
-            match 10_i32.checked_pow((str_vec.len() - 1 - i) as u32) {
-                Some(v) => 
-                    match num.checked_add(dig*(10_i32.pow((str_vec.len() - 1 - i) as u32))){
-                        Some(v) => {
-                            num = v},
-                        None => {
-                            if(is_neg){
-                                return std::i32::MIN;
-                            }
-                            else{
-                                return std::i32::MAX;
-                            }
-                        }
-                    },
-                None => {
-                    if(is_neg){
-                        return std::i32::MIN;
-                    }
-                    else{
-                        return std::i32::MAX;
-                    }
+            
+            if dig == 0 {continue;}
+            
+            match (10_i32).checked_pow((my_vec.len() - 1 - i) as u32) {
+                Some(n) =>
+                    match dig.checked_mul(10_i32.pow((my_vec.len() - 1 -i) as u32)) {
+                        Some(m) => 
+                            match num.checked_add(dig*10_i32.pow((my_vec.len() - 1 - i) as u32)){
+                                Some(l) => num = num + dig*10_i32.pow((my_vec.len() - 1 -i) as u32),
+                                None => is_overflow = true
+                        },
+                        None => is_overflow = true
+                },
+                None => is_overflow = true
+            };
+            
+            if(is_overflow){
+                if(is_neg){
+                    return std::i32::MIN;
                 }
-            };   
+                else{
+                    return std::i32::MAX;
+                }
+            }
         }
         
         if(is_neg){
-            num = num * (-1);
+            num = num * -1;
         }
-        
-        return num as i32;
+
+        return num;
     }
 }
