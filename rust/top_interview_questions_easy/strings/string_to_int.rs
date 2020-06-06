@@ -71,7 +71,7 @@ impl Solution {
     pub fn my_atoi(str: String) -> i32 { 
         let mut is_neg: bool = false;
         let mut num: i32 = 0;
-        let mut str_vec: VecDeque<char> = str.clone().chars().collect();//.filter(|c| !c.is_whitespace()).collect();
+        let mut str_vec: VecDeque<char> = str.clone().chars().collect();
         
         loop{
             if (str_vec.len() == 0){
@@ -81,13 +81,10 @@ impl Solution {
                 break;
             }
             else{
-                //println!("Happen?");
                 str_vec.pop_front();
             }
             
         }
-        
-        //println!("{:?}", str_vec);
         
         if (str_vec[0] == '-'){
             is_neg = true;
@@ -105,8 +102,6 @@ impl Solution {
                 break;
             }
         }
-        
-        //println!("{:?}", str_vec);
         
         for i in 0..str_vec.len() {
             if(!str_vec[i].is_numeric() && num > 0){
@@ -128,11 +123,8 @@ impl Solution {
                 Some(v) => 
                     match num.checked_add(dig*(10_i32.pow((str_vec.len() - 1 - i) as u32))){
                         Some(v) => {
-                            //println!("{}", v);
                             num = v},
                         None => {
-                            //println!("overflow?");
-                            //println!("{}", std::i32::MIN);
                             if(is_neg){
                                 return std::i32::MIN;
                             }
@@ -142,8 +134,6 @@ impl Solution {
                         }
                     },
                 None => {
-                    println!("overflow?");
-                    //println!("{}", std::i32::MIN);
                     if(is_neg){
                         return std::i32::MIN;
                     }
@@ -151,10 +141,9 @@ impl Solution {
                         return std::i32::MAX;
                     }
                 }
-            };
-            
+            };   
         }
- 
+        
         if(is_neg){
             num = num * (-1);
         }
