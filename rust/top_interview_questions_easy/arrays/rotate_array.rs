@@ -36,13 +36,16 @@ Constraints:
  ********************************************************************************/
 
 impl Solution {
-    pub fn max_profit(prices: Vec<i32>) -> i32 {
-        let mut current_profit = 0;
-        for i in 1..prices.len() {
-            if(prices[i] > prices[i-1]){
-                current_profit += prices[i] - prices[i - 1];
-            }
+    pub fn rotate(nums: &mut Vec<i32>, k: i32) {
+        let length = nums.len();
+        let r: usize = k as usize % length;
+        let nums_copy = nums.clone();
+        
+        for i in 0..(length - r) {
+            nums[i + r] = nums_copy[i];
         }
-        return current_profit;
+        for i in 0..r{//(length - r) {
+            nums[i] = nums_copy[length - r + i];
+        }
     }
 }

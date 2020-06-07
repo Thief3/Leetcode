@@ -20,3 +20,15 @@ Input: ["H","a","n","n","a","h"]
 Output: ["h","a","n","n","a","H"]
 
 *******************************************************************************/
+
+impl Solution {
+    pub fn reverse_string(s: &mut Vec<char>) {
+        let mut spare: char = ' ';
+        let length = s.len();
+        for i in 0..(length/2){
+            spare = s[i];
+            s[i] = s[length - 1 - i];
+            s[length - 1 - i] = spare;
+        }
+    }
+}
