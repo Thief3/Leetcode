@@ -42,7 +42,6 @@ class Solution {
         }
     }
 }
-*/
 
 // Still too slow, but faster still...
 class Solution {
@@ -97,3 +96,68 @@ class Solution {
     }
 }
 //[5,6,4,4,6,9,4,4,7,4,4,8,2,6,8,1,5,9,6,5,2,7,9,7,9,6,9,4,1,6,8,8,4,4,2,0,3,8,5]
+*/
+import java.util.Arrays;
+class Solution {
+    public static int jump(int[] nums) {
+        //System.out.println("******************************");
+        if(nums.length == 1){
+            return 0;
+        }
+        int[] count_list = new int[nums.length];
+        for(int i = 0; i < nums.length; i++){
+            count_list[i] = -1;
+        }
+        for(int i = nums.length - 1; i > -1; i--){
+            count_list[i] = recursion_jumping(nums, i, 0, count_list);
+            //System.out.print(i);System.out.print(" : ");System.out.println(count_list[i]);
+        }
+
+        return count_list[0];
+    }
+    public static int recursion_jumping(int[] nums, int current_loc, int turns, int[] count_list){
+        if(current_loc >= nums.length - 1){
+            return turns;
+        }
+        else {
+            int low = 100000;
+            int[] copy = Arrays.copyOfRange(count_list, current_loc, current_loc + nums[current_loc]);
+            //System.out.println(Arrays.toString(copy));
+            if(Arrays.stream(copy).noneMatch(element -> element == -1) &&
+                current_loc + nums[current_loc] < nums.length){
+                int[] copy_copy = copy;
+                Arrays.sort(copy);
+                int copy_val = 0;
+                for(int i = 0; i < copy_copy.length; i++){
+                    if(copy_copy[i] == copy_val){
+                        return copy_val + i + turns;
+                    }
+                }
+            }
+            for(int i = 1; i <= nums[current_loc] && current_loc + i < nums.length; i++){
+                int val = low;
+                
+                if(count_list[current_loc + i] == -1){
+                    val = recursion_jumping(nums, current_loc + i, turns + 1, count_list);
+                    count_list[current_loc + i] = val;
+                }
+                else if(count_list[current_loc + i] == 300000){
+                    val = 300000;
+                }
+                else if(nums[current_loc] + current_loc < nums.length - 1 && nums[current_loc + i] == 300000){
+                    return 300000;
+                }
+                else{
+                    val = recursion_jumping(nums, current_loc + i, turns + 1, count_list);
+                }
+                
+                if(val < low){
+                    low = val;
+                }
+            }
+            return low;
+        }
+    }
+}
+//[5,6,4,4,6,9,4,4,7,4,4,8,2,6,8,1,5,9,6,5,2,7,9,7,9,6,9,4,1,6,8,8,4,4,2,0,3,8,5]
+//[6,2,6,1,7,9,3,5,3,7,2,8,9,4,7,7,2,2,8,4,6,6,1,3]
